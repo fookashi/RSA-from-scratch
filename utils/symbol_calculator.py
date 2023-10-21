@@ -1,26 +1,21 @@
-from utils.gcd import extended_gcd
+from rsa.utils.gcd import extended_gcd
 
 class SymbolCalculator:
-    def _is_quad_residue(self,a, p):
-        for x in range(1,p):
-            if pow(x,2,p) == a % p:
-                return True
-        return False
     def legendre(self, a, p):
-        if p < 2:
-            raise ValueError('p must not be < 2')
-        if (a == 0) or (a == 1):
-            return a
-        if a % 2 == 0:
-            r = self.legendre(a // 2, p)
-            if p * p - 1 & 8 != 0:
-                r *= -1
-        else:
-            r = self.legendre(p % a, a)
-            if (a - 1) * (p - 1) & 4 != 0:
-                r *= -1
-        return r
+        if p <= 0 or (p % 2 == 0 and p != 2):
+            raise ValueError("p должно быть простым числом или 2")
 
+        a = a % p
+        if a < 0:
+            a += p  # Приводим a к положительному значению в диапазоне [0, p)
+        if a == 0:
+            return 0
+        if a == 1:
+            return 1
+        if a % 2 == 0:
+            return self.legendre(a // 2, p) * (-1) ** ((p ** 2 - 1) // 8)
+        else:
+            return self.legendre(p % a, a) * (-1) ** ((a - 1) * (p - 1) // 4)
 
     def jacobi(self, a, n):
         if a >= n:

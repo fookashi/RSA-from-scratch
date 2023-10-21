@@ -1,14 +1,16 @@
-from utils.mod_inverser import ModInverser
-from utils.newton_sq_root import isqrt
-from interfaces import IAttacker
+from rsa.utils.mod_inverser import ModInverser
+from rsa.utils.newton_sq_root import isqrt
+from rsa.interfaces import IAttacker
+from rsa.keys import RSAPublicKey
+
 
 class FermatAttacker(IAttacker):
-    def attack(self, n: int, e: int):
+    def attack(self, public_key: RSAPublicKey):
+        e, n = public_key.e, public_key.n
         a = isqrt(n)
         temp = a**2 - n
         b = isqrt(temp)
         while b**2 != temp:
-            print(f'Trying: a={a} temp={temp} b={b}')
             a = a + 1
             temp = a * a - n
             b = isqrt(temp)

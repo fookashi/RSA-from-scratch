@@ -1,4 +1,4 @@
-from interfaces import IPrimalityTester
+from rsa.interfaces import IPrimalityTester
 from random import randint
 from math import ceil, log, log2
 

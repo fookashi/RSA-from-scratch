@@ -1,7 +1,7 @@
-from interfaces import IPrimalityTester
+from rsa.interfaces import IPrimalityTester
 from random import randint
-from utils.symbol_calculator import SymbolCalculator
-from utils.gcd import extended_gcd
+from rsa.utils.symbol_calculator import SymbolCalculator
+from rsa.utils.gcd import extended_gcd
 from math import ceil, log
 
 class SolovayStrassenTester(IPrimalityTester):

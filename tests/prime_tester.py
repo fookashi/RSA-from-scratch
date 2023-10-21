@@ -1,6 +1,6 @@
 import unittest
-from utils.key_generator import RSAKeyGeneratorService
-from prime_checkers import SolovayStrassenTester, FermatTester, MillerRabinTester
+from rsa.utils.key_generator import RSAKeyGeneratorService
+from rsa.prime_checkers import SolovayStrassenTester, FermatTester, MillerRabinTester
 
 
 def is_prime(n):
@@ -15,7 +15,6 @@ def is_prime(n):
     return True
 
 class PrimalityTests(unittest.TestCase):
-
 
     def test_fermat_high_prob(self):
         keygen = RSAKeyGeneratorService(FermatTester())

@@ -1,5 +1,5 @@
-from interfaces import IModInverseCalculator
-from utils.gcd import extended_gcd
+from rsa.interfaces import IModInverseCalculator
+from rsa.utils.gcd import extended_gcd
 
 class ModInverser(IModInverseCalculator):
     def calculate_mod_inverse(self, a, m):
