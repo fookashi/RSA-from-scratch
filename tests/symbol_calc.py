@@ -47,5 +47,4 @@ class TestSymbolCalculator(unittest.TestCase):
     def test_jacobi_9(self):
         self.assertEqual(self.calculator.jacobi(11, 15), -1)
 
-if __name__ == '__main__':
-    unittest.main()
+

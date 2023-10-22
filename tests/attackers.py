@@ -1,13 +1,15 @@
 import unittest
-from rsa.keys import RSAPublicKey
 from rsa.attacks import FermatAttacker, WienerAttacker
-from rsa.utils.key_generator import RSAKeyGeneratorService
+from rsa.keygen.key_generator import RSAKeyGeneratorService
 from rsa.prime_checkers import FermatTester
+from rsa.numgen.number_generator import NumberGenerator
 
-class TestRSAAttacks(unittest.TestCase):
+
+class TestAttacks(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.public_key, self.private_key = RSAKeyGeneratorService(FermatTester()).generate_keys(0.99,32)
+        key_gen = RSAKeyGeneratorService(FermatTester(), NumberGenerator())
+        self.public_key, self.private_key = key_gen.generate_keys(0.99,32)
     def test_fermat_attacker(self):
         attacker = FermatAttacker()
         d = attacker.attack(self.public_key)
@@ -17,7 +19,3 @@ class TestRSAAttacks(unittest.TestCase):
         attacker = WienerAttacker()
         d = attacker.attack(self.public_key)
         self.assertEqual(d, self.private_key.d)
-
-
-if __name__ == '__main__':
-    unittest.main()

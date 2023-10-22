@@ -1,6 +1,9 @@
-from rsa.interfaces import IPrimalityTester
+from math import ceil, log
 from random import randint
-from math import ceil, log, log2
+
+from rsa.interfaces import IPrimalityTester
+from .initial_check import initial_check
+
 
 class MillerRabinTester(IPrimalityTester):
     def __init__(self):
@@ -9,8 +12,6 @@ class MillerRabinTester(IPrimalityTester):
 
     def _single_iteration(self, n: int) -> bool:
         # Вычислить параметры n-1 = 2^r * d, где d - нечётное
-
-
         a = randint(2, n - 2)
         x = pow(a, self.d, n)
 
@@ -24,13 +25,10 @@ class MillerRabinTester(IPrimalityTester):
 
         return False
 
+    @initial_check
     def is_prime(self, n: int, p: float) -> bool:
-        if n < 2 or n % 2 == 0:
-            return False
         error_p = 1 - p
-        first_k = ceil(log2(n))
-        second_k = ceil(log(error_p, 0.5) / 2)
-        k = first_k if first_k > second_k else second_k
+        k = ceil(log(error_p, 0.25))
 
         self.r, self.d = 0, n - 1
         while self.d % 2 == 0:

@@ -7,7 +7,7 @@ class SymbolCalculator:
 
         a = a % p
         if a < 0:
-            a += p  # Приводим a к положительному значению в диапазоне [0, p)
+            a += p  # a to [0, p)
         if a == 0:
             return 0
         if a == 1:
@@ -24,22 +24,15 @@ class SymbolCalculator:
             return 0
         if a == 1:
             return 1
-        if a < 0:
-            if (n-1)//2 % 2 == 0:
-                return self.jacobi(-a, n)
+        if a == 2:
+            n8 = n % 8
+            if n8 == 3 or n8 == 5:
+                return -1
             else:
-                return -self.jacobi(-a, n)
+                return 1
         if a % 2 == 0:
-            if (n**2 - 1)//8 % 2 == 0:
-                return self.jacobi(a // 2, n)
-            else:
-                return -self.jacobi(a // 2, n)
-        g = extended_gcd(a,n)[0]
-        if g == a:
-            return 0
-        elif g != 1:
-            return self.jacobi(g, n) * self.jacobi(a // g, n)
-        elif (a - 1) * ((n - 1) // 4) % 2 == 0:
-            return self.jacobi(n, a)
-        else:
+            return self.jacobi(2, n) * self.jacobi(a // 2, n)
+        if a % 4 == 3 and n % 4 == 3:
             return -self.jacobi(n, a)
+        else:
+            return self.jacobi(n, a)

@@ -1,11 +1,12 @@
 import os
 import struct
 
-from .transform import bytes2int
+from rsa.utils.transform import bytes2int
+from rsa.interfaces import INumberGenerator
 
-class NumberGenerator:
+class NumberGenerator(INumberGenerator):
 
-    def _read_random_bits(self, nbits) -> bytes:
+    def _read_random_bits(self, nbits: int) -> bytes:
         nbytes, rbits = divmod(nbits, 8)
 
         # Get the random bytes
@@ -19,16 +20,12 @@ class NumberGenerator:
 
         return randomdata
 
-    def read_random_int(self, nbits: int):
+    def generate_number(self, nbits: int) -> int:
         randomdata = self._read_random_bits(nbits)
         value = bytes2int(randomdata)
         # Ensure that the number is large enough to just fill out the required
         # number of bits.
         value |= 1 << (nbits - 1)
-        return value
-
-    def read_random_odd_int(self, nbits: int):
-        value = self.read_random_int(nbits)
-
+        # Ensure that number is odd
         return value | 1
 

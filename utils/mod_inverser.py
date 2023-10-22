@@ -5,7 +5,7 @@ class ModInverser(IModInverseCalculator):
     def calculate_mod_inverse(self, a, m):
         g, x, y = extended_gcd(a, m)
         if g != 1:
-            raise ValueError("Обратный элемент не существует")
+            raise ValueError("Inversed element not existing.")
         else:
             return x % m
 

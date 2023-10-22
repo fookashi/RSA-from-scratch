@@ -1,4 +1,4 @@
-from rsa.utils.newton_sq_root import isqrt
+from rsa.utils.newtons_root import isqrt
 from rsa.interfaces import IAttacker
 from rsa.keys import RSAPublicKey
 from typing import Iterator, Iterable
@@ -35,34 +35,52 @@ class WienerAttacker(IAttacker):
             yield a
             x, y = y, x - a * y
 
-    def _contfrac_to_rational_iter(self, contfrac: Iterable[int]) -> Iterator[tuple[int, int]]:
-        n0, d0 = 0, 1
-        n1, d1 = 1, 0
+    def _contfrac_to_fractions(self, contfrac: Iterable[int]) -> Iterator[tuple[int, int]]:
+        k0, d0 = 0, 1
+        k1, d1 = 1, 0
         for q in contfrac:
-            n = q * n1 + n0
+            n = q * k1 + k0
             d = q * d1 + d0
             yield n, d
-            n0, d0 = n1, d1
-            n1, d1 = n, d
+            k0, d0 = k1, d1
+            k1, d1 = n, d
 
     def _convergents_from_contfrac(self, contfrac: Iterable[int]) -> Iterator[tuple[int, int]]:
         n_, d_ = 1, 0
-        for i, (n, d) in enumerate(self._contfrac_to_rational_iter(contfrac)):
+        for i, (n, d) in enumerate(self._contfrac_to_fractions(contfrac)):
             if i % 2 == 0:
                 yield n + n_, d + d_
             else:
                 yield n, d
             n_, d_ = n, d
-            
+
+    def solve_quadratic(self, n, phi):
+
+        a = 1
+        b = -(n - phi + 1)
+        c = n
+        discriminant = b ** 2 - 4 * a * c
+
+        if discriminant >= 0:
+            p = (-b + isqrt(discriminant)) / (2 * a)
+            q = (-b - isqrt(discriminant)) / (2 * a)
+            return p, q
+
+        return None
+
     def attack(self, public_key: RSAPublicKey):
         e, n = public_key.e, public_key.n
         f_ = self._rational_to_contfrac(e, n)
-        for k, dg in self._convergents_from_contfrac(f_):
+        for k, dg in self._contfrac_to_fractions(f_):
+            if not(k and dg):
+                continue
             edg = e * dg
             phi = edg // k
 
-            x = n - phi + 1
-            if x % 2 == 0 and self._is_perfect_square((x // 2) ** 2 - n):
-                g = edg - phi * k
-                return dg // g
+            q_solution = self.solve_quadratic(n, phi)
+            if q_solution is None:
+                continue
+            p, q = q_solution
+            if p * q == n:
+                return p, q
         return None

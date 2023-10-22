@@ -1,10 +1,11 @@
 from rsa.utils.mod_inverser import ModInverser
-from rsa.utils.newton_sq_root import isqrt
+from rsa.utils.newtons_root import isqrt
 from rsa.interfaces import IAttacker
 from rsa.keys import RSAPublicKey
 
 
 class FermatAttacker(IAttacker):
+
     def attack(self, public_key: RSAPublicKey):
         e, n = public_key.e, public_key.n
         a = isqrt(n)

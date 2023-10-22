@@ -1,15 +1,17 @@
-from rsa.interfaces import IPrimalityTester
+from math import ceil, log
 from random import randint
+
+from rsa.interfaces import IPrimalityTester
 from rsa.utils.symbol_calculator import SymbolCalculator
 from rsa.utils.gcd import extended_gcd
-from math import ceil, log
+from .initial_check import initial_check
+
 
 class SolovayStrassenTester(IPrimalityTester):
     def __init__(self):
         self.symbol_calculator = SymbolCalculator()
+
     def _single_iteration(self, n: int) -> bool:
-        if n < 2 or n % 2 == 0:
-            return False
         a = randint(2, n - 2)
         if extended_gcd(a, n)[0] > 1:
             return False
@@ -19,6 +21,7 @@ class SolovayStrassenTester(IPrimalityTester):
             return False
         return True
 
+    @initial_check
     def is_prime(self, n: int, p: float):
         error_p = 1 - p
         k = ceil(log(error_p, 0.5))
